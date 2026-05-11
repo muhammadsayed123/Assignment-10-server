@@ -7,8 +7,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-
-const uri ="mongodb+srv://movie_db:tuitrqiHbqDXUF6o@cluster0.at2amoq.mongodb.net/?appName=Cluster0";
+const uri =
+  "mongodb+srv://movie_db:tuitrqiHbqDXUF6o@cluster0.at2amoq.mongodb.net/?appName=Cluster0";
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -20,15 +20,23 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    await client.connect();
+
+    const db = client.db("movie_db");
+    const movieCollection = db.collection("movie");
+
+    app.get("/movie", async (req, res) => {
+      const cursor = movieCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+
+
+
 
     
 
-
-
-
-
-
-    await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
@@ -38,7 +46,6 @@ async function run() {
   }
 }
 run().catch(console.dir);
-
 
 app.get("/", (req, res) => {
   res.send("Server is running");
