@@ -2,13 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
+require("dotenv").config();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-const uri =
-  "mongodb+srv://movie_db:tuitrqiHbqDXUF6o@cluster0.at2amoq.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.at2amoq.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -20,7 +20,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const db = client.db("movie_db");
     const movieCollection = db.collection("movie");
@@ -45,7 +45,7 @@ async function run() {
     });
 
     app.put("/movie/:id", async (req, res) => {
-      const id = req.params;
+      const id = req.params.id;
       const data = req.body;
       const objId = new ObjectId(id);
       const filter = { _id: objId };
@@ -69,7 +69,7 @@ async function run() {
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!",
     );
